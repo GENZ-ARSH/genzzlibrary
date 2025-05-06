@@ -1,11 +1,9 @@
 const shortenUrl = async (url) => {
-    const fetch = (await import('node-fetch')).default; // Dynamic import for ESM
+    const fetch = (await import('node-fetch')).default;
     const apiKey = process.env.LINKCENTS_API_KEY;
     console.log('LINKCENTS_API_KEY:', apiKey);
 
-    // Use a publicly accessible URL instead of localhost
-    const publicUrl = 'https://genzzlibrary.vercel.app/home'; // Replace with actual public URL after deployment
-    const apiUrl = `https://linkcents.com/api?api=${apiKey}&url=${encodeURIComponent(publicUrl)}`;
+    const apiUrl = `https://linkcents.com/api?api=${apiKey}&url=${encodeURIComponent(url)}`;
     
     console.log('Linkcents API URL:', apiUrl);
 
@@ -21,7 +19,7 @@ const shortenUrl = async (url) => {
         }
     } catch (error) {
         console.error('Error shortening URL:', error.message);
-        return publicUrl; // Fallback to original URL if shortening fails
+        return url; // Fallback to original URL if shortening fails
     }
 };
 

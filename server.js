@@ -9,7 +9,7 @@ const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const { v4: uuidv4 } = require('uuid');
 const shortenUrl = require('./utils/linkcents');
-const cookieParser = require('cookie-parser'); // Added for cookie parsing
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 
@@ -17,8 +17,16 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cookieParser()); // Added to parse cookies
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cookieParser());
+// Temporarily allow all origins for debugging CSRF issue
+app.use(cors({
+    origin: (origin, callback) => {
+        console.log('CORS Origin:', origin);
+        console.log('Expected FRONTEND_URL:', process.env.FRONTEND_URL);
+        callback(null, true); // Allow all origins for now
+    },
+    credentials: true
+}));
 app.use(helmet());
 
 // Rate Limiting
@@ -29,7 +37,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Session Middleware
+// Session Middleware (Still used for other features, but not for CSRF token)
 const sessionStore = MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
@@ -41,7 +49,7 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -88,8 +96,9 @@ const verifyToken = (req, res, next) => {
 const csrfMiddleware = (req, res, next) => {
     if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
         const csrfToken = req.headers['x-csrf-token'];
-        if (!csrfToken || csrfToken !== req.session.csrfToken) {
-            console.log('CSRF token validation failed:', csrfToken, req.session.csrfToken);
+        const storedCsrfToken = req.cookies.csrfToken;
+        if (!csrfToken || csrfToken !== storedCsrfToken) {
+            console.log('CSRF token validation failed:', csrfToken, storedCsrfToken);
             return res.status(403).json({ error: 'CSRF token validation failed' });
         }
     }
@@ -98,33 +107,55 @@ const csrfMiddleware = (req, res, next) => {
 
 // API Routes
 app.get('/api/csrf-token', (req, res) => {
-    const csrfToken = uuidv4();
-    req.session.csrfToken = csrfToken;
-    console.log('Generated CSRF token:', csrfToken, 'Session ID:', req.sessionID);
-    res.json({ csrfToken });
+    try {
+        console.log('Received request for /api/csrf-token');
+        const csrfToken = uuidv4();
+        res.cookie('csrfToken', csrfToken, {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 24 * 60 * 60 * 1000,
+        });
+        console.log('Generated CSRF token:', csrfToken);
+        res.json({ csrfToken });
+    } catch (error) {
+        console.error('Error in /api/csrf-token:', error);
+        res.status(500).json({ error: 'Failed to generate CSRF token' });
+    }
+});
+
+app.get('/api/verify-token', (req, res) => {
+    const token = req.cookies.accessKey;
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+    try {
+        jwt.verify(token, process.env.JWT_SECRET);
+        res.status(200).json({ valid: true });
+    } catch (error) {
+        res.status(403).json({ error: 'Invalid token' });
+    }
 });
 
 app.get('/api/shorten', async (req, res) => {
     const homeUrl = `${process.env.FRONTEND_URL}/home.html`;
     console.log('Shortening URL:', homeUrl);
+
     try {
         const shortenedUrl = await shortenUrl(homeUrl);
         console.log('Shortened URL:', shortenedUrl);
 
-        // Generate JWT token for access
         const token = jwt.sign({ access: true }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        
-        // Set token as cookie
         res.cookie('accessKey', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            maxAge: 24 * 60 * 60 * 1000,
         });
 
         res.json({ shortenedUrl });
     } catch (error) {
-        console.error('Shortening failed:', error.message);
+        console.error('Error in /api/shorten:', error.message);
         res.status(500).json({ error: error.message });
     }
 });

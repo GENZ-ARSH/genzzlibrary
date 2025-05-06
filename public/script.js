@@ -1,5 +1,5 @@
-// Use relative path for API calls (works on both local and Vercel)
-const API_BASE_URL = '/';
+// Set API base URL based on environment
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/' : 'https://genzzlibrary.vercel.app/';
 
 // Sound Effects (Embedded as Base64)
 const clickSoundBase64 = 'data:audio/mp3;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/4QAuRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAA...'; // Replace with actual base64 string
@@ -13,23 +13,35 @@ const switchSound = new Audio(switchSoundBase64);
 // CSRF Token
 let csrfToken = null;
 
-// Fetch CSRF Token
-async function fetchCsrfToken() {
-    try {
-        const response = await fetch(`${API_BASE_URL}api/csrf-token`, { credentials: 'include' });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch CSRF token: ${response.statusText}`);
+// Fetch CSRF Token with Retry
+async function fetchCsrfToken(attempts = 3, delay = 1000) {
+    for (let i = 0; i < attempts; i++) {
+        try {
+            console.log('Fetching CSRF token from:', `${API_BASE_URL}api/csrf-token`, `Attempt ${i + 1}`);
+            const response = await fetch(`${API_BASE_URL}api/csrf-token`, { credentials: 'include' });
+            console.log('CSRF token response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch CSRF token: ${response.statusText}`);
+            }
+            const data = await response.json();
+            console.log('CSRF token response data:', data);
+            if (!data.csrfToken) {
+                throw new Error('CSRF token not received from server');
+            }
+            csrfToken = data.csrfToken;
+            const storedCsrfToken = getCookie('csrfToken');
+            console.log('Stored CSRF token in cookie:', storedCsrfToken);
+            return true;
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+            if (i < attempts - 1) {
+                console.log(`Retrying CSRF token fetch in ${delay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            } else {
+                console.warn('Failed to fetch CSRF token after retries. Proceeding without CSRF token.');
+                return false;
+            }
         }
-        const data = await response.json();
-        if (!data.csrfToken) {
-            throw new Error('CSRF token not received from server');
-        }
-        csrfToken = data.csrfToken;
-        return true;
-    } catch (error) {
-        console.error('Error fetching CSRF token:', error);
-        alert('Failed to fetch CSRF token. Some features may not work. Please refresh the page or try again later.');
-        return false;
     }
 }
 
@@ -54,10 +66,7 @@ function playSound(sound) {
 // Load Theme with Auto-Detect
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch CSRF Token on Load
-    const tokenFetched = await fetchCsrfToken();
-    if (!tokenFetched) {
-        console.warn('Proceeding without CSRF token. Some features may fail.');
-    }
+    await fetchCsrfToken();
 
     // Auto-detect system theme
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -80,8 +89,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof particlesJS !== 'undefined') {
         particlesJS('particles', {
             particles: {
-                number: { value: 100, density: { enable: true, value_area: 800 } }, // Increased particles
-                color: { value: ['#1E90FF', '#FF44CC', '#FFD700'] }, // Multi-color particles
+                number: { value: 100, density: { enable: true, value_area: 800 } },
+                color: { value: ['#1E90FF', '#FF44CC', '#FFD700'] },
                 shape: { type: 'circle' },
                 opacity: { value: 0.7, random: true },
                 size: { value: 4, random: true },
@@ -117,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load Announcements
     const announcementText = document.getElementById('announcement-text');
     if (announcementText) {
-        announcementText.textContent = 'Welcome to GENZZ CODERS! New books added to PDF Library! ��';
+        announcementText.textContent = 'Welcome to GENZZ CODERS! New books added to PDF Library! 📚';
     }
 
     // Load Profile Name
@@ -133,6 +142,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         updateProgress();
+
+        // Add click handler for Next Topper section
+        const nextTopperCard = document.getElementById('next-topper-card');
+        if (nextTopperCard) {
+            nextTopperCard.onclick = () => {
+                window.location.href = 'https://power-study.vercel.app/Batches.html';
+            };
+        }
+    }
+
+    // Add click handler for "How to Generate Key" button on index.html
+    if (window.location.pathname.includes('index.html')) {
+        const howToGenerateKeyButton = document.getElementById('how-to-generate-key');
+        if (howToGenerateKeyButton) {
+            howToGenerateKeyButton.onclick = () => {
+                window.location.href = 'https://t.me/+Bnq8o97cPBw1MzM0';
+            };
+        }
     }
 
     // Easter Egg
@@ -190,7 +217,7 @@ function checkKey() {
     if (!key || !keyTimestamp || (currentTime - parseInt(keyTimestamp) > hours24)) {
         localStorage.removeItem('accessKey');
         localStorage.removeItem('keyTimestamp');
-        setCookie('accessKey', '', -1); // Expire the cookie
+        setCookie('accessKey', '', -1);
         if (!window.location.pathname.includes('index.html')) {
             window.location.href = 'index.html';
         }
@@ -241,7 +268,7 @@ function redirectToBooksWithAnimation() {
     }, 1000);
 }
 
-// Sample Books (for simulation)
+// Sample Books (5 books for simulation)
 const sampleBooks = [
     {
         name: "Physics for JEE",
@@ -266,6 +293,22 @@ const sampleBooks = [
         downloadLink: "https://example.com/biology-for-neet.pdf",
         tag: "exam-neet",
         badges: ["TOP ⭐"]
+    },
+    {
+        name: "Mathematics for IIT-JEE",
+        author: "R.D. Sharma",
+        coverImage: "https://via.placeholder.com/150?text=Maths+IIT-JEE",
+        downloadLink: "https://example.com/maths-iit-jee.pdf",
+        tag: "exam-jee",
+        badges: ["BEST 📘"]
+    },
+    {
+        name: "English Grammar for Class 10",
+        author: "Wren & Martin",
+        coverImage: "https://via.placeholder.com/150?text=English+Grammar",
+        downloadLink: "https://example.com/english-grammar.pdf",
+        tag: "class-10",
+        badges: ["CLASSIC 📖"]
     }
 ];
 
@@ -273,14 +316,16 @@ const sampleBooks = [
 async function fetchBooksForBooksPage() {
     try {
         const response = await fetch(`${API_BASE_URL}api/books`, { credentials: 'include' });
+        console.log('Fetch books response status:', response.status);
         if (!response.ok) {
             throw new Error('Failed to fetch books');
         }
         const books = await response.json();
-        renderBooksForBooksPage(books);
+        console.log('Fetched books:', books);
+        renderBooksForBooksPage(books.length ? books : sampleBooks);
     } catch (error) {
         console.error('Error fetching books for books page:', error);
-        renderBooksForBooksPage(sampleBooks); // Fallback to sample books
+        renderBooksForBooksPage(sampleBooks);
     }
 }
 
@@ -297,6 +342,8 @@ function renderBooksForBooksPage(books) {
                 <button onclick="downloadBook('${book.name}', '${book.downloadLink}')">Download</button>
             </div>
         `).join('');
+    } else {
+        console.error('books-section element not found');
     }
 }
 
@@ -309,10 +356,10 @@ async function fetchBooks() {
             throw new Error('Failed to fetch books');
         }
         const books = await response.json();
-        renderBooks(books);
+        renderBooks(books.length ? books : sampleBooks);
     } catch (error) {
         console.error('Error fetching books:', error);
-        renderBooks(sampleBooks); // Fallback to sample books
+        renderBooks(sampleBooks);
     } finally {
         loadQuiz();
     }
@@ -340,7 +387,7 @@ function renderBooks(books) {
 function downloadBook(bookName, link) {
     downloadedBooks.push(bookName);
     localStorage.setItem('downloadedBooks', JSON.stringify(downloadedBooks));
-    updateProgress(20); // +20% for each download
+    updateProgress(20);
     if (downloadedBooks.length >= 3 && !localStorage.getItem('bookCollectorBadge')) {
         localStorage.setItem('bookCollectorBadge', 'Book Collector 📚');
         alert('Badge Unlocked: Book Collector 📚');
@@ -379,7 +426,7 @@ function updateProgress(points = 0) {
     if (progressFill) progressFill.style.width = `${progress}%`;
     
     const badges = [
-        { threshold: 25, name: 'Beginner ��', key: 'beginnerBadge' },
+        { threshold: 25, name: 'Beginner 📖', key: 'beginnerBadge' },
         { threshold: 50, name: 'Book Worm 🐛', key: 'bookWormBadge' },
         { threshold: 75, name: 'Scholar 📖', key: 'scholarBadge' },
         { threshold: 100, name: 'GenZZ Master 🌟', key: 'genzzMasterBadge' }
@@ -444,11 +491,6 @@ async function verifyAdminOnLoad() {
 
 // Add Book
 async function addBook() {
-    if (!csrfToken) {
-        alert('CSRF token not available. Please refresh the page.');
-        return;
-    }
-
     const book = {
         name: document.getElementById('book-name')?.value || '',
         author: document.getElementById('book-author')?.value || '',
@@ -462,7 +504,7 @@ async function addBook() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
+                'X-CSRF-Token': csrfToken || ''
             },
             body: JSON.stringify(book),
             credentials: 'include'
@@ -479,11 +521,6 @@ async function addBook() {
 
 // Add Badge
 async function addBadge() {
-    if (!csrfToken) {
-        alert('CSRF token not available. Please refresh the page.');
-        return;
-    }
-
     const badge = {
         badgeName: document.getElementById('badge-name')?.value || '',
         emoji: document.getElementById('badge-emoji')?.value || ''
@@ -494,7 +531,7 @@ async function addBadge() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
+                'X-CSRF-Token': csrfToken || ''
             },
             body: JSON.stringify(badge),
             credentials: 'include'
@@ -514,7 +551,7 @@ function copyReferralLink() {
     const referralLink = 'https://genzz-coders.com/invite?ref=user123';
     navigator.clipboard.writeText(referralLink).then(() => {
         alert('Referral link copied: ' + referralLink);
-        updateProgress(15); // +15% for sharing
+        updateProgress(15);
         if (!localStorage.getItem('socialStar')) {
             localStorage.setItem('socialStar', 'Social Star 🌟');
             alert('Badge Unlocked: Social Star 🌟');
@@ -574,7 +611,7 @@ function submitQuiz() {
         }
     });
     alert(`Your score: ${score}/${quizQuestions.length}`);
-    updateProgress(score * 10); // +10% per correct answer
+    updateProgress(score * 10);
     if (score === quizQuestions.length && !localStorage.getItem('quizMasterBadge')) {
         localStorage.setItem('quizMasterBadge', 'Quiz Master 🧠');
         alert('Badge Unlocked: Quiz Master 🧠');
@@ -648,17 +685,12 @@ async function handleChatbotInput(event) {
         chatState = 'askReview';
         addBotMessage(`Nice to meet you, ${userName}! Please share your review.`);
     } else if (chatState === 'askReview') {
-        if (!csrfToken) {
-            addBotMessage('CSRF token not available. Please refresh the page.');
-            return;
-        }
-
         try {
             const response = await fetch(`${API_BASE_URL}api/reviews`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken
+                    'X-CSRF-Token': csrfToken || ''
                 },
                 body: JSON.stringify({ name: userName, message }),
                 credentials: 'include'
@@ -668,7 +700,7 @@ async function handleChatbotInput(event) {
                 throw new Error(data.error || 'Failed to submit review');
             }
             addBotMessage(`${data.message} Here's the shortened link: ${data.shortenedUrl}`);
-            updateProgress(10); // +10% for review
+            updateProgress(10);
             chatState = 'idle';
         } catch (error) {
             console.error('Error submitting review:', error);
@@ -708,7 +740,7 @@ async function handleChatbotInput(event) {
             chatState = 'askPassword';
             addBotMessage('Please enter the admin password:');
         } else if (message === '/links') {
-            addBotMessage('Join our Telegram: https://t.me/genzzcoders');
+            addBotMessage('Join our Telegram: https://t.me/+Bnq8o97cPBw1MzM0');
         } else {
             addBotMessage('I\'m here to collect reviews! Please share your review.');
             chatState = 'askReview';
