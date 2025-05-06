@@ -14,6 +14,9 @@ dotenv.config();
 
 const app = express();
 
+// Enable trust proxy to handle X-Forwarded-For header correctly on Vercel
+app.set('trust proxy', true);
+
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
@@ -95,6 +98,8 @@ const csrfMiddleware = (req, res, next) => {
     if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
         const csrfToken = req.headers['x-csrf-token'];
         const storedCsrfToken = req.cookies.csrfToken;
+        console.log('CSRF token from header:', csrfToken);
+        console.log('CSRF token from cookie:', storedCsrfToken);
         if (!csrfToken || csrfToken !== storedCsrfToken) {
             console.log('CSRF token validation failed:', csrfToken, storedCsrfToken);
             return res.status(403).json({ error: 'CSRF token validation failed' });
@@ -132,42 +137,6 @@ app.get('/api/verify-token', (req, res) => {
         res.status(200).json({ valid: true });
     } catch (error) {
         res.status(403).json({ error: 'Invalid token' });
-    }
-});
-
-app.get('/api/shorten', async (req, res) => {
-    try {
-        // Get the shortened URL from the query parameter
-        const shortenedUrl = req.query.shortenedUrl;
-        if (!shortenedUrl) {
-            throw new Error('Shortened URL not provided in query parameter');
-        }
-        console.log('Received shortened URL:', shortenedUrl);
-
-        // Generate and set the access token
-        const token = jwt.sign({ access: true }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.cookie('accessKey', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000,
-        });
-
-        // Set keyTimestamp in localStorage and redirect
-        res.send(`
-            <script>
-                localStorage.setItem('keyTimestamp', ${new Date().getTime()});
-                window.location.href = '${decodeURIComponent(shortenedUrl)}';
-            </script>
-        `);
-    } catch (error) {
-        console.error('Error in /api/shorten:', error.message);
-        res.status(500).send(`
-            <script>
-                alert('Failed to process key: ${error.message}. Please try again.');
-                window.location.href = '/index.html';
-            </script>
-        `);
     }
 });
 

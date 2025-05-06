@@ -1,15 +1,6 @@
 // Set API base URL based on environment
 const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/' : 'https://genzzlibrary.vercel.app/';
 
-// Sound Effects (Embedded as Base64)
-const clickSoundBase64 = 'data:audio/mp3;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/4QAuRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAA...'; // Replace with actual base64 string
-const notifySoundBase64 = 'data:audio/mp3;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/4QAuRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAA...'; // Replace with actual base64 string
-const switchSoundBase64 = 'data:audio/mp3;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/4QAuRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAA...'; // Replace with actual base64 string
-
-const clickSound = new Audio(clickSoundBase64);
-const notifySound = new Audio(notifySoundBase64);
-const switchSound = new Audio(switchSoundBase64);
-
 // CSRF Token
 let csrfToken = null;
 
@@ -29,6 +20,8 @@ async function fetchCsrfToken(attempts = 3, delay = 1000) {
                 throw new Error('CSRF token not received from server');
             }
             csrfToken = data.csrfToken;
+            // Ensure the cookie is set correctly
+            setCookie('csrfToken', csrfToken, 24);
             const storedCsrfToken = getCookie('csrfToken');
             console.log('Stored CSRF token in cookie:', storedCsrfToken);
             return true;
@@ -52,15 +45,7 @@ function toggleTheme() {
     if (themeToggle) {
         themeToggle.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
         localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-        playSound(switchSound);
     }
-}
-
-// Play Sound with Error Handling
-function playSound(sound) {
-    sound.play().catch(error => {
-        console.error('Error playing sound:', error);
-    });
 }
 
 // Load Theme with Auto-Detect
@@ -230,12 +215,11 @@ function checkKey() {
     return true;
 }
 
-// Key Generation - Call ShrinkEarn API Directly
+// Key Generation - Call ShrinkEarn API and Redirect Directly
 async function generateKey(server, button) {
     const title = button.querySelector('.card-title');
     if (title) title.textContent = 'Generating Your Key...';
     button.classList.add('generating');
-    playSound(clickSound);
 
     const apiKey = '75b57c4de11b3e75c8dc6483d76c7822d8a54dc7'; // ShrinkEarn API key
     const urlToShorten = 'https://genzzlibrary.vercel.app/home.html'; // URL to shorten
@@ -254,8 +238,12 @@ async function generateKey(server, button) {
 
         if (data.status === 'success' && data.shortenedUrl) {
             console.log('Successfully shortened URL:', data.shortenedUrl);
-            // Redirect to backend /api/shorten with the shortened URL as a query parameter
-            window.location.href = `${API_BASE_URL}api/shorten?shortenedUrl=${encodeURIComponent(data.shortenedUrl)}`;
+            // Generate a simple access token (for now, a random string; ideally, this should be a JWT from the backend)
+            const accessToken = Math.random().toString(36).substring(2);
+            setCookie('accessKey', accessToken, 24);
+            localStorage.setItem('keyTimestamp', new Date().getTime());
+            // Redirect directly to the shortened URL
+            window.location.href = data.shortenedUrl;
         } else {
             throw new Error(data.message || 'Failed to shorten URL: Invalid response from ShrinkEarn');
         }
@@ -671,7 +659,6 @@ function addUserMessage(message) {
     if (messages) {
         messages.innerHTML += `<p class="user-message">${message}</p>`;
         messages.scrollTop = messages.scrollHeight;
-        playSound(notifySound);
     }
 }
 
@@ -706,7 +693,7 @@ async function handleChatbotInput(event) {
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to submit review');
             }
-            addBotMessage(`${data.message} Here's the shortened link: ${data.shortenedUrl}`);
+            addBotMessage(`${data.message} Here's the link: ${data.shortenedUrl}`);
             updateProgress(10);
             chatState = 'idle';
         } catch (error) {
