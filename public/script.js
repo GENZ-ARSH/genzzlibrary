@@ -230,15 +230,41 @@ function checkKey() {
     return true;
 }
 
-// Key Generation - Redirect to Backend
-function generateKey(server, button) {
+// Key Generation - Call ShrinkEarn API Directly
+async function generateKey(server, button) {
     const title = button.querySelector('.card-title');
     if (title) title.textContent = 'Generating Your Key...';
     button.classList.add('generating');
     playSound(clickSound);
 
-    // Redirect to backend /api/shorten endpoint
-    window.location.href = `${API_BASE_URL}api/shorten`;
+    const apiKey = '75b57c4de11b3e75c8dc6483d76c7822d8a54dc7'; // ShrinkEarn API key
+    const urlToShorten = 'https://genzzlibrary.vercel.app/home.html'; // URL to shorten
+    const apiUrl = `https://shrinkearn.com/api?api=${apiKey}&url=${encodeURIComponent(urlToShorten)}`;
+
+    console.log('Calling ShrinkEarn API:', apiUrl);
+
+    try {
+        const response = await fetch(apiUrl);
+        console.log('ShrinkEarn API response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`ShrinkEarn API responded with status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('ShrinkEarn API response data:', data);
+
+        if (data.status === 'success' && data.shortenedUrl) {
+            console.log('Successfully shortened URL:', data.shortenedUrl);
+            // Redirect to backend /api/shorten with the shortened URL as a query parameter
+            window.location.href = `${API_BASE_URL}api/shorten?shortenedUrl=${encodeURIComponent(data.shortenedUrl)}`;
+        } else {
+            throw new Error(data.message || 'Failed to shorten URL: Invalid response from ShrinkEarn');
+        }
+    } catch (error) {
+        console.error('Error shortening URL:', error.message);
+        alert('Failed to generate key: ' + error.message);
+        if (title) title.textContent = 'Generate Key';
+        button.classList.remove('generating');
+    }
 }
 
 // Redirect to Books with Animation

@@ -8,7 +8,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const { v4: uuidv4 } = require('uuid');
-const shortenUrl = require('./utils/shrinkearn'); // Updated to use shrinkearn.js
 const cookieParser = require('cookie-parser');
 
 dotenv.config();
@@ -138,9 +137,12 @@ app.get('/api/verify-token', (req, res) => {
 
 app.get('/api/shorten', async (req, res) => {
     try {
-        // Call ShrinkEarn to shorten the URL
-        const shortenedUrl = await shortenUrl();
-        console.log('Shortened URL received:', shortenedUrl);
+        // Get the shortened URL from the query parameter
+        const shortenedUrl = req.query.shortenedUrl;
+        if (!shortenedUrl) {
+            throw new Error('Shortened URL not provided in query parameter');
+        }
+        console.log('Received shortened URL:', shortenedUrl);
 
         // Generate and set the access token
         const token = jwt.sign({ access: true }, process.env.JWT_SECRET, { expiresIn: '24h' });
@@ -155,14 +157,14 @@ app.get('/api/shorten', async (req, res) => {
         res.send(`
             <script>
                 localStorage.setItem('keyTimestamp', ${new Date().getTime()});
-                window.location.href = '${shortenedUrl}';
+                window.location.href = '${decodeURIComponent(shortenedUrl)}';
             </script>
         `);
     } catch (error) {
         console.error('Error in /api/shorten:', error.message);
         res.status(500).send(`
             <script>
-                alert('Failed to generate key: ${error.message}. Please try again.');
+                alert('Failed to process key: ${error.message}. Please try again.');
                 window.location.href = '/index.html';
             </script>
         `);
@@ -201,13 +203,7 @@ app.post('/api/reviews', csrfMiddleware, async (req, res) => {
         const review = new Review({ name, message });
         await review.save();
         const reviewUrl = `${process.env.FRONTEND_URL}/reviews/${review._id}`;
-        let shortenedUrl = reviewUrl;
-        try {
-            shortenedUrl = await shortenUrl();
-        } catch (error) {
-            console.error('Failed to shorten review URL:', error.message);
-        }
-        res.json({ message: 'Review submitted successfully', shortenedUrl });
+        res.json({ message: 'Review submitted successfully', shortenedUrl: reviewUrl });
     } catch (error) {
         res.status(500).json({ error: 'Failed to submit review' });
     }
