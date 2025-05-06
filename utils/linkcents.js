@@ -2,18 +2,21 @@ const shortenUrl = async () => {
     const fetch = (await import('node-fetch')).default;
     const apiKey = 'bb22911fe37d3daa0c26c1f50b43a7a8804b80d4'; // Hardcoded LinkCents API key
     const urlToShorten = 'https://genzzlibrary.vercel.app/home.html'; // Hardcoded URL to shorten
-    console.log('Using hardcoded LinkCents API key:', apiKey);
+    console.log('Using LinkCents API key:', apiKey);
     console.log('URL to shorten:', urlToShorten);
 
     const apiUrl = `https://linkcents.com/api?api=${apiKey}&url=${encodeURIComponent(urlToShorten)}`;
     
-    console.log('Linkcents API URL:', apiUrl);
+    console.log('Calling LinkCents API:', apiUrl);
 
     try {
         const response = await fetch(apiUrl);
-        console.log('Linkcents API response status:', response.status);
+        console.log('LinkCents API response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`LinkCents API responded with status: ${response.status}`);
+        }
         const data = await response.json();
-        console.log('Linkcents API response data:', data);
+        console.log('LinkCents API response data:', data);
 
         if (data.status === 'success' && data.shortenedUrl) {
             console.log('Successfully shortened URL:', data.shortenedUrl);

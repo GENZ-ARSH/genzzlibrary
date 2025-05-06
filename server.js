@@ -138,6 +138,7 @@ app.get('/api/verify-token', (req, res) => {
 
 app.get('/api/shorten', async (req, res) => {
     try {
+        // Call LinkCents to shorten the URL
         const shortenedUrl = await shortenUrl();
         console.log('Shortened URL received:', shortenedUrl);
 
@@ -150,7 +151,7 @@ app.get('/api/shorten', async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000,
         });
 
-        // Redirect to the shortened URL and set keyTimestamp in localStorage
+        // Set keyTimestamp in localStorage and redirect
         res.send(`
             <script>
                 localStorage.setItem('keyTimestamp', ${new Date().getTime()});
