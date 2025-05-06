@@ -1,0 +1,30 @@
+[build]
+  command = "yarn install"
+
+[[builds]]
+  src = "server.js"
+  use = "@vercel/node"
+
+[[builds]]
+  src = "public/**"
+  use = "@vercel/static"
+
+[[routes]]
+  src = "/api/(.*)"
+  dest = "/server.js"
+
+[[routes]]
+  src = "/(books\\.html)?$"
+  dest = "/public/$1"
+  check = true
+  headers = { "Cache-Control" = "public, max-age=0, must-revalidate" }
+
+[[routes]]
+  src = "/admin\\.html$"
+  dest = "/public/admin.html"
+  headers = { "Cache-Control" = "public, max-age=0, must-revalidate" }
+
+[[routes]]
+  src = "/(index\\.html|comingsoon\\.html)?$"
+  dest = "/public/$1"
+  headers = { "Cache-Control" = "public, max-age=0, must-revalidate" }

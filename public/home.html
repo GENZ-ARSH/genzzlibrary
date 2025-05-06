@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZZ CODERS - Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="checkKey()">
+    <!-- Particle Background -->
+    <div id="particles"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo" id="logo">GENZZ CODERS</div>
+        <div class="header-right">
+            <button id="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </header>
+
+    <!-- Announcements Banner -->
+    <div class="announcements">
+        <marquee id="announcement-text">Welcome to GENZZ CODERS! New books added to PDF Library! 📚</marquee>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
+            <div class="profile-section">
+                <img id="profile-pic" src="https://via.placeholder.com/50" alt="Profile Picture">
+                <input type="file" id="profile-upload" accept="image/*" onchange="updateProfilePic(event)" style="display: none;">
+                <label for="profile-upload" class="upload-btn">Change</label>
+                <span id="profile-name">User</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" style="width: 0%;"></div>
+                <span id="progress-text">0% - No Badges</span>
+                <div id="badges-list" style="margin-top: 10px; font-size: 12px;"></div>
+            </div>
+            <ul>
+                <li><span class="icon">📊</span> Dashboard</li>
+                <li><span class="icon">💎</span> Khazana</li>
+                <li><span class="icon">📚</span> My Batches</li>
+                <li><span class="icon">📖</span> Study Batches</li>
+                <li><span class="icon">🗂️</span> Old Batches</li>
+                <li><span class="icon">📩</span> Join Telegram</li>
+                <li onclick="showDownloads()"><span class="icon">⬇️</span> My Downloads</li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>Welcome to GENZZ CODERS</h1>
+            <p>Choose your preferred learning platform</p>
+            <div class="card-grid">
+                <div class="card" onclick="window.location.href='coming-soon.html'">
+                    <span class="icon">📘</span>
+                    <h3 class="card-title">PDABLU</h3>
+                    <p>Access PDABLU study materials and courses</p>
+                </div>
+                <div class="card" onclick="window.location.href='coming-soon.html'">
+                    <span class="icon">📜</span>
+                    <h3 class="card-title">PDABLU Old Batches</h3>
+                    <p>Access archived PDABLU courses</p>
+                </div>
+                <div class="card" id="books-card" onclick="redirectToBooksWithAnimation()">
+                    <span class="icon">��</span>
+                    <h3 class="card-title">PDF Library</h3>
+                    <p>Access PDF study materials and resources</p>
+                </div>
+                <div class="card" onclick="window.location.href='coming-soon.html'">
+                    <span class="icon">🎮</span>
+                    <h3 class="card-title">GENZZ PLAYER</h3>
+                    <p>Play and learn with GENZZ PLAYER</p>
+                </div>
+                <div class="card" onclick="window.location.href='coming-soon.html'">
+                    <span class="icon">📚</span>
+                    <h3 class="card-title">KGS</h3>
+                    <p>Access KGS learning platform</p>
+                </div>
+                <div class="card" onclick="window.location.href='coming-soon.html'">
+                    <span class="icon">🌟</span>
+                    <h3 class="card-title">Next-Topper</h3>
+                    <p>Access Next-Topper educational resources</p>
+                </div>
+                <div class="card" id="quiz-card">
+                    <span class="icon">❓</span>
+                    <h3 class="card-title">Quiz Corner</h3>
+                    <p>Test your knowledge with fun quizzes!</p>
+                </div>
+            </div>
+            <div id="books-section" class="books-section hidden"></div>
+            <div id="downloads-section" class="downloads-section hidden">
+                <h2>My Downloads</h2>
+                <ul id="downloads-list"></ul>
+            </div>
+            <div id="quiz-section" class="quiz-section hidden">
+                <h2>Quiz Corner</h2>
+                <div id="quiz-content"></div>
+                <button onclick="submitQuiz()">Submit</button>
+            </div>
+            <div id="leaderboard-section" class="leaderboard-section hidden">
+                <h2>Leaderboard</h2>
+                <ul id="leaderboard-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-icon" onclick="toggleChatbot()">
+        <span>💬</span>
+    </div>
+    <div class="chatbot" id="chatbot">
+        <div class="chatbot-header">
+            <span>Genzz Assistant</span>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div class="chatbot-body" id="chatbot-body">
+            <div id="chatbot-messages"></div>
+            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleChatbotInput(event)">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

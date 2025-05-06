@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZZ CODERS - Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="verifyAdminOnLoad()">
+    <!-- Particle Background -->
+    <div id="particles"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo" id="logo">GENZZ CODERS</div>
+        <div class="header-right">
+            <button id="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </header>
+
+    <!-- Announcements Banner -->
+    <div class="announcements">
+        <marquee id="announcement-text">Welcome to GENZZ CODERS! New books added to PDF Library! 📚</marquee>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="container centered">
+        <h1>Admin Panel</h1>
+        <div class="admin-section">
+            <h2>Add Book</h2>
+            <div class="form">
+                <input type="text" id="book-name" placeholder="Book Name">
+                <input type="text" id="book-author" placeholder="Author">
+                <input type="text" id="book-cover" placeholder="Cover Image URL">
+                <input type="text" id="book-link" placeholder="Download Link">
+                <select id="book-tag">
+                    <option value="class-10">Class 10</option>
+                    <option value="class-12">Class 12</option>
+                    <option value="exam-jee">JEE</option>
+                    <option value="exam-neet">NEET</option>
+                </select>
+                <button onclick="addBook()">Add Book</button>
+            </div>
+        </div>
+        <div class="admin-section">
+            <h2>Add Badge</h2>
+            <div class="form">
+                <input type="text" id="badge-name" placeholder="Badge Name (e.g., HOT)">
+                <input type="text" id="badge-emoji" placeholder="Emoji (e.g., 🔥)">
+                <button onclick="addBadge()">Add Badge</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

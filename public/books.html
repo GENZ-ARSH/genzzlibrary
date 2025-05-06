@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZZ CODERS - Books</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="checkKey()">
+    <!-- Particle Background -->
+    <div id="particles"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo" id="logo">GENZZ CODERS</div>
+        <div class="header-right">
+            <button id="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </header>
+
+    <!-- Announcements Banner -->
+    <div class="announcements">
+        <marquee id="announcement-text">Welcome to GENZZ CODERS! New books added to PDF Library! 📚</marquee>
+    </div>
+
+    <!-- Books Section -->
+    <div class="container centered">
+        <h1>PDF Library</h1>
+        <p>Access PDF study materials and resources</p>
+        <div id="books-section" class="books-section"></div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-icon" onclick="toggleChatbot()">
+        <span>💬</span>
+    </div>
+    <div class="chatbot" id="chatbot">
+        <div class="chatbot-header">
+            <span>Genzz Assistant</span>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div class="chatbot-body" id="chatbot-body">
+            <div id="chatbot-messages"></div>
+            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleChatbotInput(event)">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

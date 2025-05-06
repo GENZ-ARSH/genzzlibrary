@@ -1,0 +1,744 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%); /* Classier gradient */
+    color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body.light-mode {
+    background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%); /* Classier light gradient */
+    color: #000;
+}
+
+body.transition-to-books {
+    animation: glitch 0.5s ease-in-out forwards, fadeOut 0.5s ease-in-out 0.5s forwards;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        color: #fff;
+    }
+    20% {
+        transform: translate(-5px, 5px);
+        color: #1E90FF;
+        text-shadow: 2px 2px 0 #FF44CC, -2px -2px 0 #FF44CC;
+    }
+    40% {
+        transform: translate(5px, -5px);
+        color: #FF44CC;
+        text-shadow: -2px 2px 0 #1E90FF, 2px -2px 0 #1E90FF;
+    }
+    60% {
+        transform: translate(-5px, 5px);
+        color: #1E90FF;
+        text-shadow: 2px 2px 0 #FF44CC, -2px -2px 0 #FF44CC;
+    }
+    80% {
+        transform: translate(5px, -5px);
+        color: #FF44CC;
+        text-shadow: -2px 2px 0 #1E90FF, 2px -2px 0 #1E90FF;
+    }
+    100% {
+        transform: translate(0);
+        color: #fff;
+    }
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+#particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 10;
+}
+
+body.light-mode header {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.announcements {
+    background: linear-gradient(45deg, #FF4444, #FF7777, #FF9999); /* Classier gradient */
+    padding: 5px;
+    position: relative;
+    z-index: 5;
+}
+
+body.light-mode .announcements {
+    background: linear-gradient(45deg, #cc3333, #cc6666, #cc8888); /* Classier light gradient */
+}
+
+.announcements marquee {
+    color: #fff;
+    font-size: 14px;
+}
+
+.container {
+    display: flex;
+    min-height: calc(100vh - 60px);
+    position: relative;
+    z-index: 5;
+}
+
+.sidebar {
+    width: 250px;
+    background: linear-gradient(145deg, #222, #333, #444); /* Classier gradient */
+    padding: 20px;
+    transition: transform 0.3s;
+}
+
+body.light-mode .sidebar {
+    background: linear-gradient(145deg, #fff, #eee, #ddd); /* Classier light gradient */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.hamburger {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.upload-btn {
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+body.light-mode .upload-btn {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+#profile-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 100%;
+    background: #444;
+    height: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+body.light-mode .progress-bar {
+    background: #ccc;
+}
+
+#progress-fill {
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s;
+}
+
+body.light-mode #progress-fill {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+#progress-text {
+    display: block;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    padding: 15px 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    background: linear-gradient(45deg, #333, #444, #555); /* Classier gradient */
+}
+
+body.light-mode .sidebar li:hover {
+    background: linear-gradient(45deg, #eee, #ddd, #ccc); /* Classier light gradient */
+}
+
+.icon {
+    margin-right: 10px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+}
+
+.main-content h1, .main-heading {
+    font-size: 36px;
+    margin-bottom: 10px;
+    margin-top: -20px;
+}
+
+.main-content p {
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+body.light-mode .main-content p {
+    color: #666;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    position: relative;
+    padding: 20px;
+    border-radius: 10px;
+    transition: transform 0.3s;
+    cursor: pointer;
+    background: linear-gradient(145deg, #2A2A2A, #1F1F1F, #333); /* Classier gradient */
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    opacity: 0.8;
+}
+
+body.light-mode .card {
+    background: linear-gradient(145deg, #FFFFFF, #E5E5E5, #D5D5D5); /* Classier light gradient */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .card::before {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card.telegram-card::before {
+    background: linear-gradient(45deg, #FF4444, #FF7777, #FF9999); /* Classier gradient */
+}
+
+body.light-mode .card.telegram-card::before {
+    background: linear-gradient(45deg, #cc3333, #cc6666, #cc8888); /* Classier light gradient */
+}
+
+.card.server-card::before {
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+}
+
+body.light-mode .card.server-card::before {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+.card.server-card.generating::before {
+    background: linear-gradient(45deg, #FF44CC, #1E90FF, #FFD700); /* Classier gradient */
+}
+
+body.light-mode .card.server-card.generating::before {
+    background: linear-gradient(45deg, #cc3399, #0066cc, #ccac00); /* Classier light gradient */
+}
+
+.card.referral-card::before {
+    background: linear-gradient(45deg, #FFD700, #FFA500, #FFCA28); /* Classier gradient */
+}
+
+body.light-mode .card.referral-card::before {
+    background: linear-gradient(45deg, #ccac00, #cc8400, #ccac28); /* Classier light gradient */
+}
+
+.card .icon {
+    font-size: 24px;
+}
+
+.card .card-title {
+    font-size: 28px;
+    margin: 10px 0;
+}
+
+.card p {
+    color: #aaa;
+    font-size: 14px;
+}
+
+body.light-mode .card p {
+    color: #666;
+}
+
+.card a {
+    color: #1E90FF;
+    text-decoration: none;
+}
+
+body.light-mode .card a {
+    color: #0066cc;
+}
+
+.card button {
+    padding: 5px 10px;
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body.light-mode .card button {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+.card button:hover {
+    background: linear-gradient(45deg, #FF44CC, #1E90FF, #FFD700); /* Classier gradient */
+}
+
+body.light-mode .card button:hover {
+    background: linear-gradient(45deg, #cc3399, #0066cc, #ccac00); /* Classier light gradient */
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.books-section, .downloads-section, .quiz-section, .leaderboard-section {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.book-card {
+    position: relative;
+    background: linear-gradient(145deg, #2A2A2A, #1F1F1F, #333); /* Classier gradient */
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.book-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    opacity: 0.8;
+}
+
+.book-card::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    z-index: -1;
+    border-radius: 14px;
+    background: transparent;
+    border: 2px dashed #1E90FF;
+    animation: dna-border 3s infinite linear;
+}
+
+@keyframes dna-border {
+    0% { border-color: #1E90FF; transform: rotate(0deg); }
+    50% { border-color: #FF44CC; }
+    100% { border-color: #1E90FF; transform: rotate(360deg); }
+}
+
+body.light-mode .book-card {
+    background: linear-gradient(145deg, #FFFFFF, #E5E5E5, #D5D5D5); /* Classier light gradient */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .book-card::before {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+body.light-mode .book-card::after {
+    border-color: #0066cc;
+    animation: dna-border-light 3s infinite linear;
+}
+
+@keyframes dna-border-light {
+    0% { border-color: #0066cc; transform: rotate(0deg); }
+    50% { border-color: #cc3399; }
+    100% { border-color: #0066cc; transform: rotate(360deg); }
+}
+
+.book-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.book-card .badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    background-color: #FF4444;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.book-card .tag {
+    display: block;
+    margin: 5px 0;
+    color: #aaa;
+    font-size: 12px;
+}
+
+body.light-mode .book-card .tag {
+    color: #666;
+}
+
+.book-card button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body.light-mode .book-card button {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+.book-card button:hover {
+    background: linear-gradient(45deg, #FF44CC, #1E90FF, #FFD700); /* Classier gradient */
+}
+
+body.light-mode .book-card button:hover {
+    background: linear-gradient(45deg, #cc3399, #0066cc, #ccac00); /* Classier light gradient */
+}
+
+.downloads-section ul, .leaderboard-section ul {
+    list-style: none;
+    width: 100%;
+}
+
+.downloads-section li, .leaderboard-section li {
+    background: linear-gradient(145deg, #2A2A2A, #1F1F1F, #333); /* Classier gradient */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+body.light-mode .downloads-section li, body.light-mode .leaderboard-section li {
+    background: linear-gradient(145deg, #FFFFFF, #E5E5E5, #D5D5D5); /* Classier light gradient */
+}
+
+.quiz-section {
+    display: block;
+}
+
+.quiz-section .question {
+    margin-bottom: 20px;
+}
+
+.quiz-section .question label {
+    display: block;
+    margin: 5px 0;
+}
+
+.chatbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, #FFC107, #FFCA28, #FFD700); /* Classier gradient */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+body.light-mode .chatbot-icon {
+    background: linear-gradient(45deg, #FFA000, #FFCA28, #ccac00); /* Classier light gradient */
+}
+
+.chatbot {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 300px;
+    background: linear-gradient(145deg, #FFC107, #FFCA28, #FFD700); /* Classier gradient */
+    border-radius: 10px;
+    overflow: hidden;
+    display: none;
+    z-index: 1000;
+}
+
+body.light-mode .chatbot {
+    background: linear-gradient(145deg, #FFA000, #FFCA28, #ccac00); /* Classier light gradient */
+}
+
+.chatbot-header {
+    background: linear-gradient(45deg, #FFB300, #FFCA28, #FFD700); /* Classier gradient */
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body.light-mode .chatbot-header {
+    background: linear-gradient(45deg, #FFA000, #FFCA28, #ccac00); /* Classier light gradient */
+}
+
+.chatbot-header button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.chatbot-body {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.chatbot-messages {
+    margin-bottom: 10px;
+}
+
+.chatbot-messages p {
+    margin: 5px 0;
+}
+
+.chatbot-messages .bot-message {
+    background-color: #FFF9C4;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    color: #000;
+}
+
+body.light-mode .chatbot-messages .bot-message {
+    background-color: #FFFDE7;
+}
+
+.chatbot-messages .typing {
+    background-color: #FFF9C4;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    color: #000;
+}
+
+body.light-mode .chatbot-messages .typing {
+    background-color: #FFFDE7;
+}
+
+.chatbot-messages .typing::after {
+    content: '...';
+    animation: typing 1s infinite;
+}
+
+@keyframes typing {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+}
+
+.chatbot-messages .user-message {
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-left: auto;
+    text-align: right;
+}
+
+body.light-mode .chatbot-messages .user-message {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+#chatbot-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #FFF9C4;
+    color: #000;
+}
+
+body.light-mode #chatbot-input {
+    background: #FFFDE7;
+}
+
+#chatbot-input::placeholder {
+    color: #666;
+}
+
+body.light-mode #chatbot-input::placeholder {
+    color: #666;
+}
+
+.admin-section {
+    margin: 20px 0;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form input, .form select {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.light-mode .form input, body.light-mode .form select {
+    background: rgba(0, 0, 0, 0.05);
+    color: #000;
+}
+
+.form button {
+    padding: 10px;
+    background: linear-gradient(45deg, #1E90FF, #FF44CC, #FFD700); /* Classier gradient */
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body.light-mode .form button {
+    background: linear-gradient(45deg, #0066cc, #cc3399, #ccac00); /* Classier light gradient */
+}
+
+.form button:hover {
+    background: linear-gradient(45deg, #FF44CC, #1E90FF, #FFD700); /* Classier gradient */
+}
+
+body.light-mode .form button:hover {
+    background: linear-gradient(45deg, #cc3399, #0066cc, #ccac00); /* Classier light gradient */
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .hamburger {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+}

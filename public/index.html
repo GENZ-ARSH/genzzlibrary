@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZZ CODERS - Generate Key</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo" id="logo">GENZZ CODERS</div>
+        <div class="header-right">
+            <button id="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </header>
+
+    <!-- Announcements Banner -->
+    <div class="announcements">
+        <marquee id="announcement-text">Welcome to GENZZ CODERS! New books added to PDF Library! 📚</marquee>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container centered">
+        <h1 class="main-heading">Generate Your Access Key</h1>
+        <p>Choose your preferred server to generate your access key</p>
+        <div class="card-grid">
+            <div class="card telegram-card">
+                <span class="icon">📹</span>
+                <h3 class="card-title">How to Generate Key</h3>
+                <p>Watch this video to generate key</p>
+                <a href="https://t.me/genzzcoders" target="_blank">Join Telegram</a>
+            </div>
+            <div class="card server-card" onclick="generateKey('server1', this)">
+                <span class="icon">🔵</span>
+                <h3 class="card-title">Server 1</h3>
+                <p>Generate key using SERVER 1 to get access in GENZZ CODERS</p>
+            </div>
+            <div class="card server-card" onclick="generateKey('server2', this)">
+                <span class="icon">🌙</span>
+                <h3 class="card-title">Server 2</h3>
+                <p>Generate key using SERVER 2 to get access in GENZZ CODERS</p>
+            </div>
+            <div class="card referral-card">
+                <span class="icon">🌟</span>
+                <h3 class="card-title">Invite Friends</h3>
+                <p>Share GENZZ CODERS with friends!</p>
+                <button onclick="copyReferralLink()">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-icon" onclick="toggleChatbot()">
+        <span>💬</span>
+    </div>
+    <div class="chatbot" id="chatbot">
+        <div class="chatbot-header">
+            <span>Genzz Assistant</span>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div class="chatbot-body" id="chatbot-body">
+            <div id="chatbot-messages"></div>
+            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleChatbotInput(event)">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
