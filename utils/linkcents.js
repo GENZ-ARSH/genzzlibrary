@@ -4,7 +4,7 @@ const shortenUrl = async (url) => {
     console.log('LINKCENTS_API_KEY:', apiKey);
 
     // Use a publicly accessible URL instead of localhost
-    const publicUrl = 'https://example.com/home'; // Replace with actual public URL after deployment
+    const publicUrl = 'https://genzzlibrary.vercel.app/home'; // Replace with actual public URL after deployment
     const apiUrl = `https://linkcents.com/api?api=${apiKey}&url=${encodeURIComponent(publicUrl)}`;
     
     console.log('Linkcents API URL:', apiUrl);
