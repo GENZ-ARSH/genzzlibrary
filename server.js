@@ -137,13 +137,11 @@ app.get('/api/verify-token', (req, res) => {
 });
 
 app.get('/api/shorten', async (req, res) => {
-    const homeUrl = 'https://genzzlibrary.vercel.app/home.html';
-    console.log('Shortening URL:', homeUrl);
-
     try {
-        const shortenedUrl = await shortenUrl(homeUrl);
-        console.log('Shortened URL:', shortenedUrl);
+        const shortenedUrl = await shortenUrl();
+        console.log('Shortened URL received:', shortenedUrl);
 
+        // Generate and set the access token
         const token = jwt.sign({ access: true }, process.env.JWT_SECRET, { expiresIn: '24h' });
         res.cookie('accessKey', token, {
             httpOnly: true,
@@ -152,7 +150,7 @@ app.get('/api/shorten', async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000,
         });
 
-        // Set keyTimestamp in localStorage via a script in the response
+        // Redirect to the shortened URL and set keyTimestamp in localStorage
         res.send(`
             <script>
                 localStorage.setItem('keyTimestamp', ${new Date().getTime()});
@@ -163,7 +161,7 @@ app.get('/api/shorten', async (req, res) => {
         console.error('Error in /api/shorten:', error.message);
         res.status(500).send(`
             <script>
-                alert('Failed to generate key. Please try again.');
+                alert('Failed to generate key: ${error.message}. Please try again.');
                 window.location.href = '/index.html';
             </script>
         `);
@@ -204,7 +202,7 @@ app.post('/api/reviews', csrfMiddleware, async (req, res) => {
         const reviewUrl = `${process.env.FRONTEND_URL}/reviews/${review._id}`;
         let shortenedUrl = reviewUrl;
         try {
-            shortenedUrl = await shortenUrl(reviewUrl);
+            shortenedUrl = await shortenUrl();
         } catch (error) {
             console.error('Failed to shorten review URL:', error.message);
         }
