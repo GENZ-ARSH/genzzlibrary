@@ -8,7 +8,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const { v4: uuidv4 } = require('uuid');
-const shortenUrl = require('./utils/linkcents');
+const shortenUrl = require('./utils/shrinkearn'); // Updated to use shrinkearn.js
 const cookieParser = require('cookie-parser');
 
 dotenv.config();
@@ -138,7 +138,7 @@ app.get('/api/verify-token', (req, res) => {
 
 app.get('/api/shorten', async (req, res) => {
     try {
-        // Call LinkCents to shorten the URL
+        // Call ShrinkEarn to shorten the URL
         const shortenedUrl = await shortenUrl();
         console.log('Shortened URL received:', shortenedUrl);
 
