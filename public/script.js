@@ -230,34 +230,15 @@ function checkKey() {
     return true;
 }
 
-// Key Generation
-async function generateKey(server, button) {
+// Key Generation - Redirect to Backend
+function generateKey(server, button) {
     const title = button.querySelector('.card-title');
     if (title) title.textContent = 'Generating Your Key...';
     button.classList.add('generating');
     playSound(clickSound);
 
-    try {
-        const response = await fetch(`${API_BASE_URL}api/shorten`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to generate key');
-        }
-        if (data.shortenedUrl) {
-            localStorage.setItem('keyTimestamp', new Date().getTime());
-            window.location.href = data.shortenedUrl;
-        } else {
-            throw new Error('No shortened URL received');
-        }
-    } catch (error) {
-        console.error('Error generating key:', error);
-        if (title) title.textContent = server === 'server1' ? 'Server 1' : 'Server 2';
-        button.classList.remove('generating');
-        alert('Failed to generate key. Please try again.');
-    }
+    // Redirect to backend /api/shorten endpoint
+    window.location.href = `${API_BASE_URL}api/shorten`;
 }
 
 // Redirect to Books with Animation

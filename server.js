@@ -18,12 +18,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-// Temporarily allow all origins for debugging CSRF issue
 app.use(cors({
     origin: (origin, callback) => {
         console.log('CORS Origin:', origin);
         console.log('Expected FRONTEND_URL:', process.env.FRONTEND_URL);
-        callback(null, true); // Allow all origins for now
+        callback(null, true);
     },
     credentials: true
 }));
@@ -37,7 +36,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Session Middleware (Still used for other features, but not for CSRF token)
+// Session Middleware
 const sessionStore = MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
@@ -138,7 +137,7 @@ app.get('/api/verify-token', (req, res) => {
 });
 
 app.get('/api/shorten', async (req, res) => {
-    const homeUrl = `${process.env.FRONTEND_URL}/home.html`;
+    const homeUrl = 'https://genzzlibrary.vercel.app/home.html';
     console.log('Shortening URL:', homeUrl);
 
     try {
@@ -153,10 +152,21 @@ app.get('/api/shorten', async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000,
         });
 
-        res.json({ shortenedUrl });
+        // Set keyTimestamp in localStorage via a script in the response
+        res.send(`
+            <script>
+                localStorage.setItem('keyTimestamp', ${new Date().getTime()});
+                window.location.href = '${shortenedUrl}';
+            </script>
+        `);
     } catch (error) {
         console.error('Error in /api/shorten:', error.message);
-        res.status(500).json({ error: error.message });
+        res.status(500).send(`
+            <script>
+                alert('Failed to generate key. Please try again.');
+                window.location.href = '/index.html';
+            </script>
+        `);
     }
 });
 

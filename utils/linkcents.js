@@ -1,7 +1,7 @@
 const shortenUrl = async (url) => {
     const fetch = (await import('node-fetch')).default;
-    const apiKey = process.env.LINKCENTS_API_KEY;
-    console.log('LINKCENTS_API_KEY:', apiKey);
+    const apiKey = 'bb22911fe37d3daa0c26c1f50b43a7a8804b80d4'; // Replace with your actual LinkCents API key
+    console.log('Using hardcoded LinkCents API key:', apiKey);
 
     const apiUrl = `https://linkcents.com/api?api=${apiKey}&url=${encodeURIComponent(url)}`;
     
