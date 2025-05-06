@@ -215,37 +215,37 @@ function checkKey() {
     return true;
 }
 
-// Key Generation - Call ShrinkEarn API and Redirect Directly
+// Key Generation - Call LinkCents API and Redirect Directly
 async function generateKey(server, button) {
     const title = button.querySelector('.card-title');
     if (title) title.textContent = 'Generating Your Key...';
     button.classList.add('generating');
 
-    const apiKey = '75b57c4de11b3e75c8dc6483d76c7822d8a54dc7'; // ShrinkEarn API key
+    const apiKey = '4244bdce026165107ecd9303ca7346f99aaf6e6d'; // LinkCents API key
     const urlToShorten = 'https://genzzlibrary.vercel.app/home.html'; // URL to shorten
-    const apiUrl = `https://shrinkearn.com/api?api=${apiKey}&url=${encodeURIComponent(urlToShorten)}`;
+    const apiUrl = `https://linkcents.com/api/shorten?api_key=${apiKey}&url=${encodeURIComponent(urlToShorten)}`;
 
-    console.log('Calling ShrinkEarn API:', apiUrl);
+    console.log('Calling LinkCents API:', apiUrl);
 
     try {
         const response = await fetch(apiUrl);
-        console.log('ShrinkEarn API response status:', response.status);
+        console.log('LinkCents API response status:', response.status);
         if (!response.ok) {
-            throw new Error(`ShrinkEarn API responded with status: ${response.status}`);
+            throw new Error(`LinkCents API responded with status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('ShrinkEarn API response data:', data);
+        console.log('LinkCents API response data:', data);
 
-        if (data.status === 'success' && data.shortenedUrl) {
-            console.log('Successfully shortened URL:', data.shortenedUrl);
+        if (data.status === 'success' && data.shortened_url) {
+            console.log('Successfully shortened URL:', data.shortened_url);
             // Generate a simple access token (for now, a random string; ideally, this should be a JWT from the backend)
             const accessToken = Math.random().toString(36).substring(2);
             setCookie('accessKey', accessToken, 24);
             localStorage.setItem('keyTimestamp', new Date().getTime());
             // Redirect directly to the shortened URL
-            window.location.href = data.shortenedUrl;
+            window.location.href = data.shortened_url;
         } else {
-            throw new Error(data.message || 'Failed to shorten URL: Invalid response from ShrinkEarn');
+            throw new Error(data.message || 'Failed to shorten URL: Invalid response from LinkCents');
         }
     } catch (error) {
         console.error('Error shortening URL:', error.message);
