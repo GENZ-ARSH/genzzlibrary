@@ -1,5 +1,5 @@
 // Set API base URL based on environment
-const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/' : 'https://genzzlibrary.vercel.app/';
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/' : 'https://genzzlibrary-backend.vercel.app/'; // Updated to point to the separate backend
 
 // CSRF Token
 let csrfToken = null;
@@ -215,37 +215,37 @@ function checkKey() {
     return true;
 }
 
-// Key Generation - Call LinkCents API and Redirect Directly
+// Key Generation - Call ShrinkMe.io API and Redirect Directly
 async function generateKey(server, button) {
     const title = button.querySelector('.card-title');
     if (title) title.textContent = 'Generating Your Key...';
     button.classList.add('generating');
 
-    const apiKey = '4244bdce026165107ecd9303ca7346f99aaf6e6d'; // LinkCents API key
+    const apiKey = '6878c6b4d4cd486e5aa2735266cc5cafdf93e651'; // ShrinkMe.io API key
     const urlToShorten = 'https://genzzlibrary.vercel.app/home.html'; // URL to shorten
-    const apiUrl = `https://linkcents.com/api/shorten?api_key=${apiKey}&url=${encodeURIComponent(urlToShorten)}`;
+    const apiUrl = `https://shrinkme.io/api?api=${apiKey}&url=${encodeURIComponent(urlToShorten)}`;
 
-    console.log('Calling LinkCents API:', apiUrl);
+    console.log('Calling ShrinkMe.io API:', apiUrl);
 
     try {
         const response = await fetch(apiUrl);
-        console.log('LinkCents API response status:', response.status);
+        console.log('ShrinkMe.io API response status:', response.status);
         if (!response.ok) {
-            throw new Error(`LinkCents API responded with status: ${response.status}`);
+            throw new Error(`ShrinkMe.io API responded with status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('LinkCents API response data:', data);
+        console.log('ShrinkMe.io API response data:', data);
 
-        if (data.status === 'success' && data.shortened_url) {
-            console.log('Successfully shortened URL:', data.shortened_url);
+        if (data.status === 'success' && data.shortenedUrl) {
+            console.log('Successfully shortened URL:', data.shortenedUrl);
             // Generate a simple access token (for now, a random string; ideally, this should be a JWT from the backend)
             const accessToken = Math.random().toString(36).substring(2);
             setCookie('accessKey', accessToken, 24);
             localStorage.setItem('keyTimestamp', new Date().getTime());
             // Redirect directly to the shortened URL
-            window.location.href = data.shortened_url;
+            window.location.href = data.shortenedUrl;
         } else {
-            throw new Error(data.message || 'Failed to shorten URL: Invalid response from LinkCents');
+            throw new Error(data.error || 'Failed to shorten URL: Invalid response from ShrinkMe.io');
         }
     } catch (error) {
         console.error('Error shortening URL:', error.message);
@@ -689,10 +689,11 @@ async function handleChatbotInput(event) {
                 body: JSON.stringify({ name: userName, message }),
                 credentials: 'include'
             });
-            const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to submit review');
+                const errorData = await response.text();
+                throw new Error(errorData || 'Failed to submit review');
             }
+            const data = await response.json();
             addBotMessage(`${data.message} Here's the link: ${data.shortenedUrl}`);
             updateProgress(10);
             chatState = 'idle';
@@ -711,10 +712,11 @@ async function handleChatbotInput(event) {
                 body: JSON.stringify({ password: message }),
                 credentials: 'include'
             });
-            const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to verify password');
+                const errorData = await response.text();
+                throw new Error(errorData || 'Failed to verify password');
             }
+            const data = await response.json();
             if (data.success) {
                 addBotMessage('Password verified! Redirecting...');
                 setTimeout(() => {
