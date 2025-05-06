@@ -1,6 +1,6 @@
 const shortenUrl = async () => {
     const fetch = (await import('node-fetch')).default;
-    const apiKey = 'bb22911fe37d3daa0c26c1f50b43a7a8804b80d4'; // Hardcoded LinkCents API key
+    const apiKey = '4244bdce026165107ecd9303ca7346f99aaf6e6d'; // Updated LinkCents API key
     const urlToShorten = 'https://genzzlibrary.vercel.app/home.html'; // Hardcoded URL to shorten
     console.log('Using LinkCents API key:', apiKey);
     console.log('URL to shorten:', urlToShorten);
